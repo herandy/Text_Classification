@@ -9,5 +9,9 @@ Requirements:
     tensorflow-gpu
     Theano
     Lasagne
-
+    NLTK
     Gensim
+
+You will preferably need to download and provide some pretrained word vectors, we recommend Glove.
+But you can also train them from scratch if you want to.
+As to which would be better depends on the size and the distribution of your data.
