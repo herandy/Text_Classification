@@ -186,9 +186,9 @@ def prepare_sequence(seq, to_ix):
     return autograd.Variable(tensor)
 
 
-class BiLSTM(nn.Module):
+class BiGRU(nn.Module):
     def __init__(self, embedding_dim, hidden_dim, vocab_size, tagset_size):
-        super(BiLSTM, self).__init__()
+        super(BiGRU, self).__init__()
         self.hidden_dim = hidden_dim
 
         self.word_embeddings = nn.Embedding(vocab_size, embedding_dim)
@@ -196,37 +196,36 @@ class BiLSTM(nn.Module):
         self.word_embeddings.weight.data.copy_(torch.from_numpy(word2vec.syn0))
         self.word_embeddings.weight.requires_grad = False
 
-        # The LSTM takes word embeddings as inputs, and outputs hidden states
+        # The GRU takes word embeddings as inputs, and outputs hidden states
         # with dimensionality hidden_dim.
-        self.lstm = nn.LSTM(input_size=embedding_dim, hidden_size=hidden_dim, num_layers=2,
+        self.gru = nn.GRU(input_size=embedding_dim, hidden_size=hidden_dim, num_layers=2,
                             batch_first=True,
                             bidirectional=True, bias=True, dropout=DROPOUT)
 
         # The linear layer that maps from hidden state space to tag space
         self.predict_lstm = nn.Linear(2 * hidden_dim, tagset_size)
 
-    def init_hidden_lstm(self, size):
+    def init_hidden_gru(self, size):
         # Before we've done anything, we dont have any hidden state.
         # Refer to the Pytorch documentation to see exactly
         # why they have this dimensionality.
         # The axes semantics are (num_layers, minibatch_size, hidden_dim)
-        return (autograd.Variable(torch.zeros(self.lstm.num_layers * 2, size, self.hidden_dim)).cuda(cuda_device),
-                autograd.Variable(torch.zeros(self.lstm.num_layers * 2, size, self.hidden_dim)).cuda(cuda_device))
+        return autograd.Variable(torch.zeros(self.gru.num_layers*2, size, self.hidden_dim)).cuda(cuda_device)
 
     def forward(self, sentence):
-        hidden_lstm = self.init_hidden_lstm(sentence.size(0))
+        hidden_gru = self.init_hidden_gru(sentence.size(0))
         embeds = self.word_embeddings(sentence)
 
-        lstm_input = F.alpha_dropout(embeds, p=DROPOUT, training=self.training)
-        lstm_out, self.hidden_lstm = self.lstm(lstm_input, hidden_lstm)
-        concatenated_output = torch.cat([lstm_out.select(1, WINDOW_SIZE - 1).contiguous()], dim=1)
+        gru_input = F.alpha_dropout(embeds, p=DROPOUT, training=self.training)
+        gru_out, self.hidden_gru = self.gru(gru_input, hidden_gru)
+        concatenated_output = torch.cat([gru_out.select(1, WINDOW_SIZE - 1).contiguous()], dim=1)
         concatenated_output = F.dropout(concatenated_output, p=DROPOUT, training=self.training)
-        output_lstm = self.predict_lstm(concatenated_output)
+        output_gru = self.predict_lstm(concatenated_output)
 
-        return output_lstm
+        return output_gru
 
 
-model = BiLSTM(word2vec.syn0.shape[1], N_HIDDEN, MAXNWORDS, NCLASS)
+model = BiGRU(word2vec.syn0.shape[1], N_HIDDEN, MAXNWORDS, NCLASS)
 
 # tensor = autograd.Variable(torch.IntTensor(torch.from_numpy(data)))
 
