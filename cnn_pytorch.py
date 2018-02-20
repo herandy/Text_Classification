@@ -85,8 +85,8 @@ def over_sample(x, y):
     return x, y
 
 
-MAXNWORDS = 500000
 N_HIDDEN = 32
+cuda_device = 0
 # loss_coefficient = 0.75
 LEARNING_RATE = 5e-3
 WINDOW_SIZE = 72
@@ -101,7 +101,7 @@ augment_flag = False
 if augment_flag:
     BATCH_SIZE = 319
 else:
-    BATCH_SIZE = 250
+    BATCH_SIZE = 256
 test_path = '22-09-2017_14-07-11_MD1N289C'
 
 print('Loading train_data...')
@@ -273,8 +273,8 @@ test_data_loader = torch.utils.data.DataLoader(test_set, batch_size=len(testlabe
 loss = torch.nn.CrossEntropyLoss(size_average=True)
 optimizer = torch.optim.Adam(filter(lambda p: p.requires_grad, model.parameters()), lr=LEARNING_RATE,
                              weight_decay=REG_VAL)
-model.cuda()
-loss.cuda()
+model.cuda(cuda_device)
+loss.cuda(cuda_device)
 
 best_f1 = 0
 
@@ -290,8 +290,8 @@ for step in range(EPOCHS):
         model.zero_grad()
         gpu_data, batch_labels = batch_data
         batch_size = gpu_data.size(0)
-        gpu_data = gpu_data.cuda()
-        batch_labels = batch_labels.cuda()
+        gpu_data = gpu_data.cuda(cuda_device)
+        batch_labels = batch_labels.cuda(cuda_device)
         gpu_data = Variable(gpu_data)
         batch_labels = Variable(batch_labels)
         optimizer.zero_grad()
@@ -312,8 +312,8 @@ for step in range(EPOCHS):
     for i, batch_data in enumerate(validation_data_loader, 0):
         gpu_data, batch_labels = batch_data
         batch_size = gpu_data.size(0)
-        gpu_data = gpu_data.cuda()
-        batch_labels = batch_labels.cuda()
+        gpu_data = gpu_data.cuda(cuda_device)
+        batch_labels = batch_labels.cuda(cuda_device)
         gpu_data = Variable(gpu_data)
         batch_labels = Variable(batch_labels)
         prediction = model.forward(gpu_data)
@@ -326,8 +326,8 @@ for step in range(EPOCHS):
     for i, batch_data in enumerate(test_data_loader, 0):
         gpu_data, batch_labels = batch_data
         batch_size = gpu_data.size(0)
-        gpu_data = gpu_data.cuda()
-        batch_labels = batch_labels.cuda()
+        gpu_data = gpu_data.cuda(cuda_device)
+        batch_labels = batch_labels.cuda(cuda_device)
         gpu_data = Variable(gpu_data)
         batch_labels = Variable(batch_labels)
         prediction = model.forward(gpu_data)
@@ -355,8 +355,8 @@ model.training = False
 for i, batch_data in enumerate(test_data_loader, 0):
     gpu_data, batch_labels = batch_data
     batch_size = gpu_data.size(0)
-    gpu_data = gpu_data.cuda()
-    batch_labels = batch_labels.cuda()
+    gpu_data = gpu_data.cuda(cuda_device)
+    batch_labels = batch_labels.cuda(cuda_device)
     gpu_data = Variable(gpu_data)
     batch_labels = Variable(batch_labels)
     prediction = model.forward(gpu_data)
@@ -367,8 +367,8 @@ final_test_preds_ensemble = []
 for i, batch_data in enumerate(test_data_loader, 0):
     gpu_data, batch_labels = batch_data
     batch_size = gpu_data.size(0)
-    gpu_data = gpu_data.cuda()
-    batch_labels = batch_labels.cuda()
+    gpu_data = gpu_data.cuda(cuda_device)
+    batch_labels = batch_labels.cuda(cuda_device)
     gpu_data = Variable(gpu_data)
     batch_labels = Variable(batch_labels)
     model.training = False
@@ -393,8 +393,8 @@ model.training = False
 for i, batch_data in enumerate(validation_data_loader, 0):
     gpu_data, batch_labels = batch_data
     batch_size = gpu_data.size(0)
-    gpu_data = gpu_data.cuda()
-    batch_labels = batch_labels.cuda()
+    gpu_data = gpu_data.cuda(cuda_device)
+    batch_labels = batch_labels.cuda(cuda_device)
     gpu_data = Variable(gpu_data)
     batch_labels = Variable(batch_labels)
     prediction = model.forward(gpu_data)
@@ -408,8 +408,8 @@ model.training = False
 for i, batch_data in enumerate(test_data_loader, 0):
     gpu_data, batch_labels = batch_data
     batch_size = gpu_data.size(0)
-    gpu_data = gpu_data.cuda()
-    batch_labels = batch_labels.cuda()
+    gpu_data = gpu_data.cuda(cuda_device)
+    batch_labels = batch_labels.cuda(cuda_device)
     gpu_data = Variable(gpu_data)
     batch_labels = Variable(batch_labels)
     prediction = model.forward(gpu_data)
@@ -428,8 +428,8 @@ best_test_preds_ensemble = []
 for i, batch_data in enumerate(test_data_loader, 0):
     gpu_data, batch_labels = batch_data
     batch_size = gpu_data.size(0)
-    gpu_data = gpu_data.cuda()
-    batch_labels = batch_labels.cuda()
+    gpu_data = gpu_data.cuda(cuda_device)
+    batch_labels = batch_labels.cuda(cuda_device)
     gpu_data = Variable(gpu_data)
     batch_labels = Variable(batch_labels)
     model.training = False
