@@ -1,6 +1,11 @@
 import numpy as np
 import os
 import sys
+from sys import platform
+if platform == "win32":
+    cp = 'copy '
+else:
+    cp = 'cp '
 
 
 def augment(data, labels, worddict):
@@ -104,8 +109,8 @@ def create_result_dirs(output_path, file_name):
         if func_file_name.split('.')[1] == 'pyc':
             func_file_name = func_file_name[:-1]
         functions_full_path = os.path.join(output_path, func_file_name)
-        cmd = 'cp ' + func_file_name + ' "' + functions_full_path + '"'
+        cmd = cp + func_file_name + ' "' + functions_full_path + '"'
         os.popen(cmd)
         run_file_full_path = os.path.join(output_path, file_name)
-        cmd = 'cp ' + file_name + ' "' + run_file_full_path + '"'
+        cmd = cp + file_name + ' "' + run_file_full_path + '"'
         os.popen(cmd)
