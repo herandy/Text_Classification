@@ -40,8 +40,8 @@ class dataset(Dataset):
         self.labels = labels  # enc.fit_transform(labels.reshape(-1, 1))
 
     def __getitem__(self, index):
-        datum = torch.from_numpy(self.data).long()[index]
-        label = torch.from_numpy(self.labels).long()[index]
+        datum = torch.LongTensor(self.data[index])
+        label = torch.LongTensor([self.labels[index].tolist()])
         return datum, label
 
     def __len__(self):
@@ -296,7 +296,7 @@ for step in range(EPOCHS):
         batch_labels = Variable(batch_labels)
         optimizer.zero_grad()
         prediction = model.forward(gpu_data)
-        output = loss.forward(prediction, batch_labels)
+        output = loss.forward(prediction, batch_labels.squeeze())
         _, tmp_preds = torch.max(prediction, 1)
         train_preds.extend(tmp_preds.cpu().data.numpy())
         train_shuffled_labels.extend(batch_labels.cpu().data.numpy())
