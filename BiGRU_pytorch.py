@@ -85,14 +85,14 @@ def over_sample(x, y):
     return x, y
 
 
-N_HIDDEN = 32
+N_HIDDEN = 48
 cuda_device = 0
 # loss_coefficient = 0.75
-LEARNING_RATE = 5e-3
+LEARNING_RATE = 5e-4
 WINDOW_SIZE = 72
 NCLASS = 4
 DROPOUT = 0.2
-EPOCHS = 500
+EPOCHS = 250
 REG_VAL = 2e-6
 # Lambda = 0.75
 TRAIN_EMBEDDING = False
@@ -101,7 +101,7 @@ augment_flag = False
 if augment_flag:
     BATCH_SIZE = 319
 else:
-    BATCH_SIZE = 256
+    BATCH_SIZE = 128
 test_path = '22-09-2017_14-07-11_MD1N289C'
 
 print('Loading train_data...')

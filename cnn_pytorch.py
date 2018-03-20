@@ -101,7 +101,7 @@ augment_flag = False
 if augment_flag:
     BATCH_SIZE = 319
 else:
-    BATCH_SIZE = 256
+    BATCH_SIZE = 128
 test_path = '22-09-2017_14-07-11_MD1N289C'
 
 print('Loading train_data...')
