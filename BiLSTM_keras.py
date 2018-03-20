@@ -26,16 +26,6 @@ import keras.backend as K
 best_f1 = [0.0]
 best_model = []
 
-# datafolder = "../../data/"
-# folder = "Corpora_2/Training/"
-# validfolder = "Corpora_2/Validation/"
-# featurefolder = "reports_smoking_annotated\\Corpora\\featureData\\"
-# testfolder = "Educational/"
-
-# labeldict = {"nonsmoker": 0, "current": 1, "previous": 2, "unknown": 3, "notrelated": -1}
-# labelinvdict = {0: "nonsmoker", 1: "current", 2: "previous", 3: "unknown", -1: "notrelated"}
-# labelvoc = np.array(list(labeldict.keys()))
-
 
 def getIds(filename, removepunc=False):
     if os.path.isfile(filename):
@@ -69,16 +59,6 @@ SUPERVISED_FEATURES = False
 augment_flag = False
 
 
-# def getIds(filename, removepunc=False):
-#     with open(filename, 'r', encoding="utf8") as f:
-#         data = normalizeText(f.read(), removepunc)
-#         data_idx = [worddict.get(word, -1) for word in data]
-#         data_idx = [idx for idx in data_idx if idx > -1]
-#         data_idx = data_idx[-MAXLEN:]
-#         if len(data_idx) < MAXLEN:
-#             data_idx = np.pad(data_idx, (MAXLEN - len(data_idx), 0), 'constant', constant_values=(0, 0))
-#         return np.array(data_idx).astype('int32')
-
 def getBatch(idx):
     x = data[idx:(idx + BATCH_SIZE)]
     y = labels[idx:(idx + BATCH_SIZE)]
@@ -106,7 +86,7 @@ def overSample2(x, y):
 optimizer = Adam(lr=LEARNING_RATE)
 
 
-def CNN_model(N_HIDDEN=24):
+def BiLSTM_model(N_HIDDEN=24):
     lin = Input(shape=(WINDOW_SIZE,), dtype='int32', name='input')
     emb = Embedding(NWORDS, DIM, input_length=WINDOW_SIZE, weights=[word2vec.syn0], trainable=False)(lin)
 
@@ -122,20 +102,6 @@ def CNN_model(N_HIDDEN=24):
     model.compile(optimizer=optimizer, loss='categorical_crossentropy', metrics=[f1])
     return model
 
-
-# epsilon = 1.0e-9
-#
-#
-# def get_ensemble_loss(y_pred_lstm, y_pred_cnn):
-#     def ensemble_loss(y_true, y_pred_lstm, y_pred_cnn):
-#         """Just another crossentropy"""
-#         y_pred_lstm = K.clip(y_pred_lstm, epsilon, 1.0 - epsilon)
-#         y_pred_lstm /= y_pred_lstm.sum(axis=-1, keepdims=True)
-#         y_pred_cnn = K.clip(y_pred_cnn, epsilon, 1.0 - epsilon)
-#         y_pred_cnn /= y_pred_cnn.sum(axis=-1, keepdims=True)
-#         cce = K.categorical_crossentropy(y_true, y_pred_lstm) + K.categorical_crossentropy(y_true, y_pred_cnn)
-#         return cce
-#     return ensemble_loss
 
 from keras.layers import Input, Embedding,concatenate,Conv1D,GlobalMaxPooling1D,Dropout,Dense,Bidirectional,LSTM,GRU
 from keras.models import Model
@@ -205,13 +171,7 @@ if 'traindata' not in locals():
     labels, validlabels, testlabels = np.int32(labels), np.int32(validlabels), np.int32(testlabels)
     
 
-# model = CNN_model()
-# model.fit(data, np_utils.to_categorical(labels), epochs=EPOCHS, batch_size=BATCH_SIZE,
-#           validation_data=(validdata, np_utils.to_categorical(validlabels)), callbacks=[metric])
-
-model = CNN_model()
-# model = CNN_model()
-# small = small_CNN_model()
+model = BiLSTM_model()
 
 best_model.append(model.get_weights())
 

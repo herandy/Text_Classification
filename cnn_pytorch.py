@@ -85,14 +85,14 @@ def over_sample(x, y):
     return x, y
 
 
-N_HIDDEN = 32
+N_HIDDEN = 48
 cuda_device = 0
 # loss_coefficient = 0.75
-LEARNING_RATE = 5e-3
+LEARNING_RATE = 5e-4
 WINDOW_SIZE = 72
 NCLASS = 4
 DROPOUT = 0.2
-EPOCHS = 500
+EPOCHS = 250
 REG_VAL = 2e-6
 # Lambda = 0.75
 TRAIN_EMBEDDING = False
