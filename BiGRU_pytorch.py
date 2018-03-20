@@ -101,7 +101,7 @@ augment_flag = False
 if augment_flag:
     BATCH_SIZE = 319
 else:
-    BATCH_SIZE = 128
+    BATCH_SIZE = 256
 test_path = '22-09-2017_14-07-11_MD1N289C'
 
 print('Loading train_data...')
@@ -236,7 +236,7 @@ test_set = dataset(testdata, testlabels)
 data_loader = torch.utils.data.DataLoader(train_set, batch_size=BATCH_SIZE, shuffle=True, num_workers=0)
 validation_data_loader = torch.utils.data.DataLoader(valid_set, batch_size=len(validlabels), shuffle=False,
                                                      num_workers=0)
-test_data_loader = torch.utils.data.DataLoader(test_set, batch_size=len(testlabels), shuffle=False, num_workers=0)
+test_data_loader = torch.utils.data.DataLoader(test_set, batch_size=1, shuffle=False, num_workers=0)
 
 loss = torch.nn.CrossEntropyLoss(size_average=True)
 optimizer = torch.optim.Adam(filter(lambda p: p.requires_grad, model.parameters()), lr=LEARNING_RATE,
