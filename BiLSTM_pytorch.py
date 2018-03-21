@@ -127,7 +127,6 @@ if 'voc' not in locals():
         worddict[word] = i
         i = i + 1
 
-path = './'
 if 'traindata' not in locals():
     # if os.path.exists(path+'ag_news_csv/processed.pickle'):
     #     with open(path+'ag_news_csv/processed.pickle', 'rb') as pf:
