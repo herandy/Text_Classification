@@ -14,7 +14,7 @@ import pickle
 from nltk.tokenize import word_tokenize
 from gensim.models import KeyedVectors
 from sklearn.metrics import f1_score, confusion_matrix
-from functions import augment, Logger, create_result_dirs
+from functions import Logger, create_result_dirs
 import re
 import socket
 import time
@@ -97,11 +97,8 @@ REG_VAL = 2e-6
 # Lambda = 0.75
 TRAIN_EMBEDDING = False
 test = False
-augment_flag = False
-if augment_flag:
-    BATCH_SIZE = 319
-else:
-    BATCH_SIZE = 256
+BATCH_SIZE = 256
+test_batch_size = 200
 test_path = '22-09-2017_14-07-11_MD1N289C'
 
 print('Loading train_data...')
@@ -268,7 +265,7 @@ test_set = dataset(testdata, testlabels)
 data_loader = torch.utils.data.DataLoader(train_set, batch_size=BATCH_SIZE, shuffle=True, num_workers=0)
 validation_data_loader = torch.utils.data.DataLoader(valid_set, batch_size=len(validlabels), shuffle=False,
                                                      num_workers=0)
-test_data_loader = torch.utils.data.DataLoader(test_set, batch_size=1, shuffle=False, num_workers=0)
+test_data_loader = torch.utils.data.DataLoader(test_set, batch_size=test_batch_size, shuffle=False, num_workers=0)
 
 loss = torch.nn.CrossEntropyLoss(size_average=True)
 optimizer = torch.optim.Adam(filter(lambda p: p.requires_grad, model.parameters()), lr=LEARNING_RATE,
@@ -387,20 +384,20 @@ print('\nFinal\t\t\tTest ensemble F1: %.3f' % test_f1)
 checkpoint = torch.load(os.path.join(output_path, 'checkpoint.pth.tar'))
 model.load_state_dict(checkpoint['state_dict'])
 
-best_valid_preds = []
-
-model.training = False
-for i, batch_data in enumerate(validation_data_loader, 0):
-    gpu_data, batch_labels = batch_data
-    batch_size = gpu_data.size(0)
-    gpu_data = gpu_data.cuda(cuda_device)
-    batch_labels = batch_labels.cuda(cuda_device)
-    gpu_data = Variable(gpu_data)
-    batch_labels = Variable(batch_labels)
-    prediction = model.forward(gpu_data)
-    best_valid_preds.extend(prediction.cpu().data.numpy())
-
-valid_f1 = f1_score(validlabels, np.argmax(best_valid_preds, axis=1), average='weighted')
+# best_valid_preds = []
+#
+# model.training = False
+# for i, batch_data in enumerate(validation_data_loader, 0):
+#     gpu_data, batch_labels = batch_data
+#     batch_size = gpu_data.size(0)
+#     gpu_data = gpu_data.cuda(cuda_device)
+#     batch_labels = batch_labels.cuda(cuda_device)
+#     gpu_data = Variable(gpu_data)
+#     batch_labels = Variable(batch_labels)
+#     prediction = model.forward(gpu_data)
+#     best_valid_preds.extend(prediction.cpu().data.numpy())
+#
+# valid_f1 = f1_score(validlabels, np.argmax(best_valid_preds, axis=1), average='weighted')
 
 best_test_preds = []
 
@@ -417,7 +414,7 @@ for i, batch_data in enumerate(test_data_loader, 0):
 
 test_f1 = f1_score(testlabels, np.argmax(best_test_preds, axis=1), average='weighted')
 
-print('\nBest\t\t\tValidation F1: %.3f\t\tTest F1: %.3f' % (valid_f1, test_f1))
+print('\nBest\t\t\tTest F1: %.3f' % test_f1)
 
 test_f1 = f1_score(testlabels, np.argmax(np.array(final_test_preds)+np.array(best_test_preds), axis=1), average='weighted')
 
