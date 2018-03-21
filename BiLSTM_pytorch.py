@@ -35,13 +35,13 @@ class dataset(Dataset):
     """
 
     def __init__(self, data, labels):
-        self.data = data
+        self.data = torch.LongTensor(data)
         # enc = OneHotEncoder(sparse=False)
-        self.labels = labels  # enc.fit_transform(labels.reshape(-1, 1))
+        self.labels = torch.LongTensor(labels.tolist())  # enc.fit_transform(labels.reshape(-1, 1))
 
     def __getitem__(self, index):
-        datum = torch.LongTensor(self.data[index])
-        label = torch.LongTensor([self.labels[index].tolist()])
+        datum = self.data[index]
+        label = self.labels[index]
         return datum, label
 
     def __len__(self):
