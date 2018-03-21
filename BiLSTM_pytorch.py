@@ -232,7 +232,7 @@ valid_set = dataset(validdata, validlabels)
 test_set = dataset(testdata, testlabels)
 
 data_loader = torch.utils.data.DataLoader(train_set, batch_size=BATCH_SIZE, shuffle=True, num_workers=0)
-validation_data_loader = torch.utils.data.DataLoader(valid_set, batch_size=len(validlabels), shuffle=False,
+validation_data_loader = torch.utils.data.DataLoader(valid_set, batch_size=test_batch_size, shuffle=False,
                                                      num_workers=0)
 test_data_loader = torch.utils.data.DataLoader(test_set, batch_size=test_batch_size, shuffle=False, num_workers=0)
 
