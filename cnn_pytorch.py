@@ -112,7 +112,7 @@ if __name__ == '__main__':
     print('Loading Word Vectors...')
     loadVectors = 'word2vec' not in locals()
     if loadVectors:
-        filename = (path + 'glove_small')
+        filename = (path + 'glove')
         # Glove format
         word2vec = KeyedVectors.load_word2vec_format(filename)
         # Normal word2vec format
