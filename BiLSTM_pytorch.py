@@ -104,7 +104,6 @@ if __name__ == '__main__':
     test_batch_size = 200
     test_path = '22-09-2017_14-07-11_MD1N289C'
 
-    print('Loading train_data...')
     path = "./"
 
     # Load word vectors. Depending on the format you might need to use another function in gensim to load your word vectors
