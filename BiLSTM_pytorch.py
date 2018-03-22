@@ -12,6 +12,8 @@ torch.manual_seed(1)
 import numpy as np
 import pickle
 from nltk.tokenize import word_tokenize
+import warnings
+warnings.filterwarnings(action='ignore', category=UserWarning, module='gensim')
 from gensim.models import KeyedVectors
 from sklearn.metrics import f1_score, confusion_matrix
 from functions import Logger, create_result_dirs
@@ -98,7 +100,7 @@ if __name__ == '__main__':
     # Lambda = 0.75
     TRAIN_EMBEDDING = False
     test = False
-    BATCH_SIZE = 256
+    BATCH_SIZE = 250
     test_batch_size = 200
     test_path = '22-09-2017_14-07-11_MD1N289C'
 
