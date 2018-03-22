@@ -265,8 +265,8 @@ if __name__ == '__main__':
 
     data_loader = torch.utils.data.DataLoader(train_set, batch_size=BATCH_SIZE, shuffle=True, num_workers=0)
     validation_data_loader = torch.utils.data.DataLoader(valid_set, batch_size=test_batch_size, shuffle=False,
-                                                         num_workers=4)
-    test_data_loader = torch.utils.data.DataLoader(test_set, batch_size=test_batch_size, shuffle=False, num_workers=4)
+                                                         num_workers=0)
+    test_data_loader = torch.utils.data.DataLoader(test_set, batch_size=test_batch_size, shuffle=False, num_workers=0)
 
     loss = torch.nn.CrossEntropyLoss(size_average=True)
     optimizer = torch.optim.Adam(filter(lambda p: p.requires_grad, model.parameters()), lr=LEARNING_RATE,
