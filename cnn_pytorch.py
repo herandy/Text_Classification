@@ -100,7 +100,7 @@ if __name__ == '__main__':
     # Lambda = 0.75
     TRAIN_EMBEDDING = False
     test = False
-    BATCH_SIZE = 250
+    BATCH_SIZE = 256
     test_batch_size = 200
     test_path = '22-09-2017_14-07-11_MD1N289C'
 
@@ -263,7 +263,7 @@ if __name__ == '__main__':
     valid_set = dataset(validdata, validlabels)
     test_set = dataset(testdata, testlabels)
 
-    data_loader = torch.utils.data.DataLoader(train_set, batch_size=BATCH_SIZE, shuffle=True, num_workers=4)
+    data_loader = torch.utils.data.DataLoader(train_set, batch_size=BATCH_SIZE, shuffle=True, num_workers=0)
     validation_data_loader = torch.utils.data.DataLoader(valid_set, batch_size=test_batch_size, shuffle=False,
                                                          num_workers=4)
     test_data_loader = torch.utils.data.DataLoader(test_set, batch_size=test_batch_size, shuffle=False, num_workers=4)
